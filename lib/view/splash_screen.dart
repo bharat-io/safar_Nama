@@ -11,50 +11,31 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late AnimationController _planeController;
-  late Animation<Offset> _planeAnimation;
-
-  late AnimationController _textController;
-  late Animation<double> _textAnimation;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Plane Controller - slower now
-    _planeController = AnimationController(
+    _fadeController = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 5), // Slower plane (6 seconds)
+      duration: const Duration(seconds: 2),
     )..forward();
 
-    _planeAnimation = Tween<Offset>(
-      begin: Offset(-1.5, 0.0),
-      end: Offset(1.5, -0.5),
-    ).animate(CurvedAnimation(
-      parent: _planeController,
-      curve: Curves.easeInOut,
-    ));
-
-    // Text Animation Controller
-    _textController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    )..forward();
-
-    _textAnimation = CurvedAnimation(
-      parent: _textController,
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
       curve: Curves.easeIn,
     );
 
-    Timer(Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, AppRoutes.HOME_SCREEN_ROUTE);
     });
   }
 
   @override
   void dispose() {
-    _planeController.dispose();
-    _textController.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
@@ -62,65 +43,53 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Stack(
-          children: [
-            // Animated text part
-            Center(
-              child: FadeTransition(
-                opacity: _textAnimation,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "SafarNama",
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 8,
-                            color: Colors.black.withOpacity(0.5),
-                            offset: Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Adventure awaits...",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white70,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Flying Plane Animation
-            SlideTransition(
-              position: _planeAnimation,
-              child: Align(
-                alignment: Alignment.center,
-                child: Icon(
+        child: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(
                   Icons.flight_takeoff,
                   size: 100,
                   color: Colors.white,
                 ),
-              ),
+                SizedBox(height: 20),
+                Text(
+                  "SafarNama",
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1.5,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 8,
+                        color: Colors.black45,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Adventure awaits...",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white70,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
